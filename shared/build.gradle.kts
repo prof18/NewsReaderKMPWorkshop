@@ -6,9 +6,12 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinxSerialization)
     id("maven-publish")
+    alias(libs.plugins.kmmbridge)
 }
 
-version = "0.0.1"
+val VERSION = project.property("LIBRARY_VERSION") as String
+
+version = VERSION
 group = "com.example.newsreaderkmp.workshop"
 
 kotlin {
@@ -22,15 +25,12 @@ kotlin {
         publishAllLibraryVariants()
     }
     
-    val xcf = XCFramework()
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
-            xcf.add(this)
+            baseName = "NewsReaderKMP"
             isStatic = true
         }
     }
@@ -62,4 +62,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+}
+
+addGithubPackagesRepository()
+
+kmmbridge {
+    mavenPublishArtifacts()
+    spm()
 }
