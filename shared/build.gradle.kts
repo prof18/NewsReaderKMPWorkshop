@@ -6,9 +6,13 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinxSerialization)
     id("maven-publish")
+    alias(libs.plugins.kmmbridge)
 }
 
-version = "0.0.1"
+
+val VERSION = project.property("LIBRARY_VERSION") as String
+
+version = VERSION
 group = "com.example.newsreaderkmpworkshop"
 
 kotlin {
@@ -26,15 +30,12 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
     
-    val xcf = XCFramework()
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
-            xcf.add(this)
+            baseName = "NewsReaderKMP"
             isStatic = true
         }
     }
@@ -63,15 +64,22 @@ android {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/prof18/NewsReaderKMPWorkshop")
-            credentials {
-                username = providers.environmentVariable("GITHUB_USER").get()
-                password = providers.environmentVariable("GITHUB_TOKEN").get()
-            }
-        }
-    }
+//publishing {
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/prof18/NewsReaderKMPWorkshop")
+//            credentials {
+//                username = providers.environmentVariable("GITHUB_USER").get()
+//                password = providers.environmentVariable("GITHUB_TOKEN").get()
+//            }
+//        }
+//    }
+//}
+
+addGithubPackagesRepository()
+
+kmmbridge {
+    mavenPublishArtifacts()
+    spm()
 }
